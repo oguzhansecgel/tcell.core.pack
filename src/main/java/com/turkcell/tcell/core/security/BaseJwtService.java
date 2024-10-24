@@ -53,6 +53,18 @@ public class BaseJwtService {
     {
         return getTokenClaims(token).get("roles",List.class);
     }
+    public Integer extractUserId(String token) {
+        Object userId = getTokenClaims(token).get("userId");
+        if (userId instanceof Integer) {
+            return (Integer) userId; // Eğer Integer ise direkt döneriz
+        } else if (userId instanceof String) {
+            return Integer.parseInt((String) userId); // String ise parse edilir
+        } else if (userId instanceof Long) {
+            return ((Long) userId).intValue(); // Long ise int'e dönüştürülür
+        } else {
+            throw new IllegalArgumentException("Invalid userId type in token");
+        }
+    }
     private Key getSigninKey()
     {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
